@@ -143,7 +143,7 @@ X_selected = sfs.transform(X)
 **Intuition:** Rather than deciding which variables to include before or after fitting the model, penalise the coefficients during fitting. Large penalties push some coefficients to zero, effectively removing those features.
 
 **Prerequisites:**
-- Lagrangian duality and constrained optimisation
+- Lagrangian duality and constrained optimisation — see `prerequisites/CONSTRAINED_OPTIMIZATION.md`
 - Familiarity with norms ($\|\cdot\|_q$)
 
 **How it works:**
