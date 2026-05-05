@@ -118,6 +118,8 @@ After:
 
 Do not add a new bullet; edit the existing one in-place.
 
+After adding the first link, scan the entire lecture file for any other **Prerequisites** bullet that names the same concept. Add the same inline reference to every matching bullet — not just the first one.
+
 ---
 
 ### What NOT to do

@@ -153,7 +153,7 @@ $$
 \hat{\boldsymbol{\beta}} = \arg\min_{\boldsymbol{\beta}} \|\mathbf{y} - \mathbf{X}\boldsymbol{\beta}\|_2^2 + \lambda \sum_{j=1}^p \mathbf{1}(\beta_j \neq 0)
 $$
 
-This is an NP-hard discrete optimisation problem. Instead, a soft (continuous) penalty is used:
+This is an NP-hard discrete optimisation problem (no known algorithm can solve it efficiently for large $p$ — the only guaranteed approach is to check all $2^p$ subsets). Instead, a soft (continuous) penalty is used:
 
 $$
 \hat{\boldsymbol{\beta}} = \arg\min_{\boldsymbol{\beta}} \|\mathbf{y} - \mathbf{X}\boldsymbol{\beta}\|_2^2 + \lambda\|\boldsymbol{\beta}\|_q^q
@@ -261,7 +261,7 @@ print("Best lambda:", ridge_cv.alpha_)
 
 ### SVD and Ridge Regression
 
-**Why it matters:** Expressing ridge regression via the SVD reveals exactly which directions in the feature space are most affected by the penalty, giving geometric insight into shrinkage.
+**Why it matters:** Expressing ridge regression via the SVD (Singular Value Decomposition) reveals exactly which directions in the feature space are most affected by the penalty, giving geometric insight into shrinkage.
 
 **Intuition:** The SVD decomposes $\mathbf{X}$ into principal directions. Ridge regression leaves large-eigenvalue directions nearly unchanged but aggressively shrinks small-eigenvalue directions (those associated with near-collinearity).
 
@@ -313,7 +313,7 @@ $$
 
 **Prerequisites:**
 - Convex optimisation
-- Understanding of constraint regions and Lagrangian duality
+- Understanding of constraint regions and Lagrangian duality — see `prerequisites/CONSTRAINED_OPTIMIZATION.md`
 
 **How it works:**
 For $q = 1$, the penalised problem is:
