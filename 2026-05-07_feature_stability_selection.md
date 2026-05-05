@@ -46,9 +46,10 @@ The $\ell_1$ penalty is the smallest-$q$ penalty that keeps the constraint conve
 
 **Why it matters:** Practitioners often want p-values and confidence intervals alongside a selected model. A naive approach — refit the lasso-selected variables using OLS on the same data — is statistically invalid and produces misleading results.
 
-**Intuition:** Once you use your data to decide *which* variables to include, the data are no longer "fresh" for evaluating *how significant* those variables are. The selection step already found the most promising variables; evaluating them on the same data double-counts the evidence.
+**Intuition:** Once you use your data to decide _which_ variables to include, the data are no longer "fresh" for evaluating _how significant_ those variables are. The selection step already found the most promising variables; evaluating them on the same data double-counts the evidence.
 
 **Prerequisites:**
+
 - Lasso and model selection
 - Ordinary least squares and logistic regression
 - Basic hypothesis testing and p-values
@@ -57,7 +58,7 @@ The $\ell_1$ penalty is the smallest-$q$ penalty that keeps the constraint conve
 
 When you refit the lasso-selected model using OLS on the full dataset:
 
-1. The model was selected *because* these variables looked good on this data — they were already optimistically screened.
+1. The model was selected _because_ these variables looked good on this data — they were already optimistically screened.
 2. Refitting on the same data does not undo this: the p-values will be systematically too small (over-optimistic).
 3. Additionally, the selected model may still have $p_{\text{selected}} > n$, making OLS infeasible or undefined.
 
@@ -65,9 +66,9 @@ This is called **selection bias**.
 
 **Strengths and Weaknesses:**
 
-| Approach | Strengths | Weaknesses |
-|----------|-----------|------------|
-| Naive OLS refit | Simple, familiar output | Biased p-values, invalid inference |
+| Approach                        | Strengths                        | Weaknesses                            |
+| ------------------------------- | -------------------------------- | ------------------------------------- |
+| Naive OLS refit                 | Simple, familiar output          | Biased p-values, invalid inference    |
 | Valid inference methods (below) | Correct coverage, valid p-values | More complex, may sacrifice some data |
 
 **Python Implementation:**
@@ -99,6 +100,7 @@ print(model.summary())  # p-values here are invalid!
 **Intuition:** Splitting the data into two groups ensures the test set has never "seen" the selection process. The p-values computed on the test set are therefore genuinely valid — no double-dipping.
 
 **Prerequisites:**
+
 - Selection bias problem (above)
 - Lasso
 - Logistic/linear regression and hypothesis testing
@@ -107,7 +109,7 @@ print(model.summary())  # p-values here are invalid!
 
 1. Randomly split the data into two halves: set 1 (selection) and set 2 (inference).
 2. Run lasso on set 1 to select a set of features $\hat{S}$.
-3. Fit an unpenalized model (OLS or GLM) using only features in $\hat{S}$, but fitted *only on set 2*.
+3. Fit an unpenalized model (OLS or GLM) using only features in $\hat{S}$, but fitted _only on set 2_.
 4. Read off valid p-values from this model.
 5. For features not selected in step 2, assign $p = 1$.
 6. Multiple-testing correction only needs to cover $|\hat{S}|$ tests, not all $p$ — a significant advantage.
@@ -116,11 +118,11 @@ print(model.summary())  # p-values here are invalid!
 
 **Strengths and Weaknesses:**
 
-| Strengths | Weaknesses |
-|-----------|------------|
-| Statistically valid p-values | Selection on half the data → smaller, potentially worse model |
-| Multiple testing correction over $|\hat{S}|$ only | P-values are random: a different split gives different results ("p-value lottery") |
-| Conceptually simple | Not reproducible across runs |
+| Strengths                          | Weaknesses                                                    |
+| ---------------------------------- | ------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------- |
+| Statistically valid p-values       | Selection on half the data → smaller, potentially worse model |
+| Multiple testing correction over $ | \hat{S}                                                       | $ only | P-values are random: a different split gives different results ("p-value lottery") |
+| Conceptually simple                | Not reproducible across runs                                  |
 
 **Python Implementation:**
 
@@ -143,7 +145,7 @@ model = sm.Logit(y_inf, X_inf_sel).fit()
 print(model.summary())
 ```
 
-> ⚠️ **Theory vs. Practice:** The `random_state` in `train_test_split` makes the split reproducible *within a session*, but the choice of seed arbitrarily determines which variables get selected and what p-values come out. Different seeds give genuinely different statistical conclusions — this is the p-value lottery. Do not report results from a single split as if they were stable. Use multi sample-splitting (below) instead.
+> ⚠️ **Theory vs. Practice:** The `random_state` in `train_test_split` makes the split reproducible _within a session_, but the choice of seed arbitrarily determines which variables get selected and what p-values come out. Different seeds give genuinely different statistical conclusions — this is the p-value lottery. Do not report results from a single split as if they were stable. Use multi sample-splitting (below) instead.
 
 ---
 
@@ -154,19 +156,21 @@ print(model.summary())
 **Intuition:** By averaging over many random splits, each feature's p-value stabilizes. The aggregated p-value reflects what would happen across many possible train/test divisions, not just one lucky or unlucky draw.
 
 **Prerequisites:**
+
 - Sample-splitting (above)
 - Basic p-value aggregation / multiple testing
 
 **How it works (Meinshausen et al., 2009):**
 
 1. Repeat $B$ times:
-   - Randomly split data into set 1 and set 2.
-   - Run lasso on set 1 → selected set $\hat{S}^{(b)}$.
-   - Fit unpenalized model on set 2 using $\hat{S}^{(b)}$; correct for multiple testing over $|\hat{S}^{(b)}|$.
-   - Record p-value $p_j^{(b)}$ for each feature $j$.
+    - Randomly split data into set 1 and set 2.
+    - Run lasso on set 1 → selected set $\hat{S}^{(b)}$.
+    - Fit unpenalized model on set 2 using $\hat{S}^{(b)}$; correct for multiple testing over $|\hat{S}^{(b)}|$.
+    - Record p-value $p_j^{(b)}$ for each feature $j$.
 2. Aggregate the $B$ p-values per feature.
 
 **Aggregation:** The $B$ p-values for each feature are **not independent** (the splits overlap), so they cannot be simply averaged. Options:
+
 - Use the **median** p-value across splits.
 - Search for the optimal quantile and adjust for the search (to avoid optimistically picking the best quantile).
 
@@ -174,10 +178,10 @@ The `hdi` package in R implements this procedure.
 
 **Strengths and Weaknesses:**
 
-| Strengths | Weaknesses |
-|-----------|------------|
-| Reproducible, stable p-values | Still sacrifices data for inference |
-| Valid multiple testing correction | Computationally expensive ($B$ fits) |
+| Strengths                                | Weaknesses                                                |
+| ---------------------------------------- | --------------------------------------------------------- |
+| Reproducible, stable p-values            | Still sacrifices data for inference                       |
+| Valid multiple testing correction        | Computationally expensive ($B$ fits)                      |
 | General-purpose, works with any selector | Aggregation requires care due to dependence across splits |
 
 **Python Implementation:**
@@ -213,11 +217,12 @@ aggregated_pvals = np.median(pval_matrix, axis=0)
 
 ### Stability Selection
 
-**Why it matters:** Rather than targeting p-values, stability selection provides a principled way to decide *which* features to include, with a formal bound on the expected number of false discoveries. It is widely used in network modeling and genomics.
+**Why it matters:** Rather than targeting p-values, stability selection provides a principled way to decide _which_ features to include, with a formal bound on the expected number of false discoveries. It is widely used in network modeling and genomics.
 
 **Intuition:** If a feature is truly relevant, it should be selected consistently across many resampled versions of the data and across a range of regularisation strengths. Features that only appear in the model for some splits or some $\lambda$ values are likely noise.
 
 **Prerequisites:**
+
 - Lasso and the regularisation path
 - Subsampling/bootstrapping
 
@@ -244,6 +249,7 @@ $$
 $$
 
 Where:
+
 - $\pi_{\text{thr}}$ = selection probability threshold
 - $q_\Lambda$ = average model size across subsamples and range $\Lambda$
 - $p$ = total number of candidate features
@@ -255,12 +261,12 @@ Where:
 
 **Strengths and Weaknesses:**
 
-| Strengths | Weaknesses |
-|-----------|------------|
-| Formal bound on false discoveries | Does not directly produce p-values |
-| Robust to choice of single $\lambda$ | Requires choosing $\pi_{\text{thr}}$ and $\Lambda$ |
-| Works well with network/graphical models | Computationally intensive (many fits) |
-| Reduces sensitivity to correlated features | Bound is conservative in practice |
+| Strengths                                  | Weaknesses                                         |
+| ------------------------------------------ | -------------------------------------------------- |
+| Formal bound on false discoveries          | Does not directly produce p-values                 |
+| Robust to choice of single $\lambda$       | Requires choosing $\pi_{\text{thr}}$ and $\Lambda$ |
+| Works well with network/graphical models   | Computationally intensive (many fits)              |
+| Reduces sensitivity to correlated features | Bound is conservative in practice                  |
 
 **Python Implementation:**
 
@@ -295,11 +301,12 @@ print("Stable features:", stable_set)
 
 ### De-sparsified (De-biased) Lasso — Optional
 
-**Why it matters:** Sample-splitting sacrifices data. The de-sparsified lasso instead corrects for the lasso's bias analytically, allowing valid p-values for *all* $p$ coefficients simultaneously without splitting the data.
+**Why it matters:** Sample-splitting sacrifices data. The de-sparsified lasso instead corrects for the lasso's bias analytically, allowing valid p-values for _all_ $p$ coefficients simultaneously without splitting the data.
 
 **Intuition:** In ordinary least squares when $p < n$, the estimate of $\beta_j$ can be written using the residuals $Z_j$ from regressing $X_j$ on all other predictors. This representation isolates the contribution of $X_j$. When $p > n$, OLS fails, but substituting a regularised regression to get approximate residuals $Z_j$ restores a usable (if biased) estimate — and that bias can be corrected.
 
 **Prerequisites:**
+
 - OLS and its matrix form
 - Lasso
 - Block matrix inversion
@@ -340,11 +347,11 @@ This allows construction of p-values and confidence intervals for every $\beta_j
 
 **Strengths and Weaknesses:**
 
-| Strengths | Weaknesses |
-|-----------|------------|
-| Valid p-values for all $p$ coefficients | Requires sparsity conditions on $\beta^*$ |
-| No data splitting required | Computationally expensive ($p$ auxiliary regressions) |
-| Asymptotically valid CIs | Validity depends on structural assumptions on $X$ |
+| Strengths                               | Weaknesses                                            |
+| --------------------------------------- | ----------------------------------------------------- |
+| Valid p-values for all $p$ coefficients | Requires sparsity conditions on $\beta^*$             |
+| No data splitting required              | Computationally expensive ($p$ auxiliary regressions) |
+| Asymptotically valid CIs                | Validity depends on structural assumptions on $X$     |
 
 **Python Implementation:**
 
@@ -390,6 +397,7 @@ def desparsified_lasso(X, y, alpha_main=0.1, alpha_aux=0.1):
 **Intuition:** Ridge regression shrinks all coefficients, introducing bias. If you can characterise and subtract that bias — using lasso estimates — you recover approximately unbiased estimates with a known sampling distribution.
 
 **Prerequisites:**
+
 - Ridge regression and its closed-form solution
 - Lasso
 
@@ -405,11 +413,11 @@ Tuning parameters (ridge penalty, lasso penalty) are selected by cross-validatio
 
 **Strengths and Weaknesses:**
 
-| Strengths | Weaknesses |
-|-----------|------------|
-| Computationally cheaper than de-sparsified lasso | Requires both ridge and lasso tuning |
-| P-values for all $p$ coefficients | Validity under same sparsity/structure assumptions |
-| Closed-form ridge step | Less widely cited than de-sparsified lasso |
+| Strengths                                        | Weaknesses                                         |
+| ------------------------------------------------ | -------------------------------------------------- |
+| Computationally cheaper than de-sparsified lasso | Requires both ridge and lasso tuning               |
+| P-values for all $p$ coefficients                | Validity under same sparsity/structure assumptions |
+| Closed-form ridge step                           | Less widely cited than de-sparsified lasso         |
 
 **Python Implementation:**
 
@@ -430,4 +438,4 @@ Tuning parameters (ridge penalty, lasso penalty) are selected by cross-validatio
 - **Multi sample-splitting** resolves the p-value lottery by aggregating across many random splits; the median p-value (or an optimised quantile) is the stable summary.
 - **Stability selection** reframes the problem: instead of p-values, it asks which features are consistently selected across subsamples and a range of $\lambda$. The Meinshausen–Bühlmann bound provides formal control over the expected number of false discoveries.
 - **De-sparsified lasso** and **bias-corrected ridge** enable simultaneous inference on all $p$ coefficients without splitting data, at the cost of stronger structural assumptions and more complex implementation.
-- When $p_{\text{selected}} < n$ after selection, a common and practical approach is simply to re-estimate using an unpenalised model on the selected features — but *only if selection and inference use separate data*.
+- When $p_{\text{selected}} < n$ after selection, a common and practical approach is simply to re-estimate using an unpenalised model on the selected features — but _only if selection and inference use separate data_.
