@@ -1,5 +1,11 @@
 # Lecture 7: Boosting
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - Ensemble Methods Overview

@@ -1,5 +1,11 @@
 # Lecture 6: Kernel Methods
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - Kernels: definition and examples

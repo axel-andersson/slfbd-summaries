@@ -1,6 +1,10 @@
 # Regularised Regression (cont'd)
 
-**MSA220/MVE441 Statistical Learning for Big Data** — Rebecka Jörnsten, Mathematical Sciences, 27th April 2026
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
 
 ## 📋 Contents
 

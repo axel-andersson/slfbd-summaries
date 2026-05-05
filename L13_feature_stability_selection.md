@@ -1,5 +1,11 @@
 # High-Dimensional Inference: Feature & Stability Selection
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - Lasso as a Selection Mechanism (Recap)

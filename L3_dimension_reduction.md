@@ -1,5 +1,11 @@
 # Lecture 3: A First Look at Dimension Reduction
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - The Curse of Dimensionality

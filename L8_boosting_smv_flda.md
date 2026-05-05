@@ -1,6 +1,12 @@
 
 # Lecture 8: Boosting, SVMs and Flexible Discriminant Analysis
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - Tuning Boosting Machines (Recap)

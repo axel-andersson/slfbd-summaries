@@ -1,6 +1,12 @@
 # Lecture 8: Neural Networks
 **MSA220/MVE441 Statistical Learning for Big Data** — Rebecka Jörnsten, Mathematical Sciences, 20th April 2026
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - Logistic Regression as a Network Model

@@ -1,5 +1,11 @@
 # Lecture 5: Rule-based Classification and Regression (CART & Random Forests)
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - Classification and Partitions

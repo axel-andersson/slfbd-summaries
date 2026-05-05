@@ -1,5 +1,11 @@
 # Lecture 2b: Model Evaluation and Bias-Variance Tradeoff
 
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
+
 ## 📋 Contents
 
 - Model selection vs. model assessment

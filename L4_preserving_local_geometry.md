@@ -1,7 +1,10 @@
 # Lecture 4 – Preserving Local Geometry
 
-**MSA220/MVE441 – Statistical Learning for Big Data**
-*Rebecka Jörnsten, Mathematical Sciences — 30th March 2026*
+**Course:** MSA220/MVE441 Statistical Learning for Big Data
+**Lecturer:** Rebecka Jörnsten, Mathematical Sciences
+**Date:** ???
+
+---
 
 ## 📋 Contents
 
