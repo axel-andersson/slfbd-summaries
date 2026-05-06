@@ -120,21 +120,24 @@ $$
 
 ```python
 from sklearn.neighbors import NearestCentroid
-# Note: sklearn's NearestCentroid does NOT implement shrunken centroids.
-# Use the dedicated package instead:
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.model_selection import cross_val_score
+import numpy as np
 
-# For true nearest shrunken centroids, use the 'rpy2' bridge to R's 'pamr' package,
-# or the 'nearest_shrunken_centroids' implementation in Python (e.g. via pyShrunkenCentroids):
-# pip install pyShrunkenCentroids
-
-from pyShrunkenCentroids import ShrunkenCentroidsClassifier
-clf = ShrunkenCentroidsClassifier(threshold=2.0)  # threshold = lambda
+# shrink_threshold is the lambda in the lecture: soft-thresholds the standardised
+# deviations t_ij before recomputing class centroids (ESL eqs. 18.4–18.5).
+# Without it, this is plain nearest-centroid — no shrinkage, no variable selection.
+clf = NearestCentroid(shrink_threshold=0.5)
 clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
+
+# Tune shrink_threshold via cross-validation; scan a grid from 0 (no shrinkage) upward.
+thresholds = np.arange(0.0, 1.01, 0.1)
+scores = [cross_val_score(NearestCentroid(shrink_threshold=t), X, y, cv=5).mean()
+          for t in thresholds]
+best_threshold = thresholds[np.argmax(scores)]
 ```
 
-⚠️ **Theory vs. Practice:** `sklearn.neighbors.NearestCentroid` is a plain nearest-centroid classifier — it does not perform shrinkage or variable selection. Using it here will give you the unregularised version, defeating the entire purpose of the method. There is no sklearn implementation of nearest shrunken centroids. The canonical implementation is `pamr` in R. If you need Python, verify whatever package you use actually applies the soft-thresholding step to the standardised deviations $t_i^{(j)}$, not to the raw centroids.
+⚠️ **Theory vs. Practice:** `sklearn.neighbors.NearestCentroid` *does* implement nearest shrunken centroids, but only when `shrink_threshold` is set explicitly — the default is `None`, which gives plain nearest-centroid with no shrinkage or variable selection. Two further pitfalls: shrinkage cannot be used with sparse matrices (e.g. tf-idf features), and as of sklearn 1.5 only `"euclidean"` and `"manhattan"` metrics are supported. The canonical reference implementation is `pamr` in R.
 
 ---
 
