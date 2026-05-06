@@ -379,7 +379,7 @@ print("Best lambda:", lasso_cv.alpha_)
 **Why it matters:** The geometry of the constraint region explains why $q = 1$ produces sparsity while $q = 2$ does not, and why $q < 1$ would give sparser solutions but at the cost of losing convexity.
 
 **How it works:**
-The RSS is an ellipse centred at $\hat{\boldsymbol{\beta}}_\text{OLS}$. Adding a constraint $\|\boldsymbol{\beta}\|_q^q \leq t$ restricts solutions to the interior of a $q$-ball. The constrained solution is where the RSS ellipse first touches the constraint region.
+The RSS (Residual Sum of Squares) is an ellipse centred at $\hat{\boldsymbol{\beta}}_\text{OLS}$. Adding a constraint $\|\boldsymbol{\beta}\|_q^q \leq t$ restricts solutions to the interior of a $q$-ball. The constrained solution is where the RSS ellipse first touches the constraint region.
 
 - **$q = 2$ (Ridge):** The constraint region is a sphere — smooth boundary. The RSS ellipse touches it at a non-axis point, so neither coefficient is forced to zero.
 - **$q = 1$ (Lasso):** The constraint region is a diamond with corners on the axes. The RSS ellipse is likely to first contact the diamond at a corner, which sets one coordinate to zero. This is the geometric origin of sparsity.
