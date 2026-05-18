@@ -2,7 +2,7 @@
 
 **Course:** MSA220/MVE441 Statistical Learning for Big Data
 **Lecturer:** Rebecka Jörnsten, Mathematical Sciences
-**Date:** ???
+**Date:** 2026-05-07
 
 ---
 
@@ -124,11 +124,11 @@ print(model.summary())  # p-values here are invalid!
 
 **Strengths and Weaknesses:**
 
-| Strengths                          | Weaknesses                                                    |
-| ---------------------------------- | ------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------- |
-| Statistically valid p-values       | Selection on half the data → smaller, potentially worse model |
-| Multiple testing correction over $ | \hat{S}                                                       | $ only | P-values are random: a different split gives different results ("p-value lottery") |
-| Conceptually simple                | Not reproducible across runs                                  |
+| Strengths                                              | Weaknesses                                                     |
+| ------------------------------------------------------ | -------------------------------------------------------------- |
+| Statistically valid p-values                           | Selection on half the data → smaller, potentially worse model  |
+| Multiple testing correction over $\|\hat{S}\|$ only    | P-values are random: a different split gives different results ("p-value lottery") |
+| Conceptually simple                                    | Not reproducible across runs                                   |
 
 **Python Implementation:**
 
@@ -301,7 +301,13 @@ stable_set = np.where(max_probs >= pi_thr)[0]
 print("Stable features:", stable_set)
 ```
 
-> ⚠️ **Theory vs. Practice:** The formal bound from Meinshausen & Bühlmann assumes the subsamples are drawn without replacement (exactly half the data). Using bootstrap samples (with replacement) changes the distribution and invalidates the bound. Also, sklearn's `Lasso` uses coordinate descent and may not reach exact zeros at large regularisation — check that `coef_ != 0` is what you intend and consider a small tolerance (`np.abs(coef_) > 1e-6`) instead.
+> ⚠️ **Theory vs. Practice:** Several gaps between the theory and a naive sklearn implementation:
+>
+> - **Subsampling vs. bootstrap.** The formal bound assumes subsamples drawn *without* replacement (exactly $n/2$ observations). Using `resample(..., replace=True)` (bootstrap) changes the overlap distribution between subsamples and invalidates the bound. The code above uses `replace=False` — keep it that way.
+>
+> - **Exact zeros from coordinate descent.** Sklearn's `Lasso` uses coordinate descent, which produces exact zeros via soft-thresholding *only when fully converged*. With $p > n$, convergence is slower; at the default `max_iter=1000`, a coefficient that should be zero may land at `1e-14`, and `coef_ != 0` counts that as selected. Use a tolerance: `np.abs(coef_) > 1e-6`. Watch for `ConvergenceWarning` — it is easy to suppress accidentally with `warnings.filterwarnings('ignore')`.
+>
+> - **At most $n$ features can be selected when $p > n$.** This is a structural property of the lasso, not a software bug: with $n$ observations the lasso solution has at most $n$ non-zero coefficients regardless of $p$. On each subsample of size $n/2$, the effective cap is $\sim n/2$. If the true signal involves more features than that, they will be systematically suppressed — stability selection in the $p \gg n$ regime can only recover a sparse subset of the truth, and the Meinshausen–Bühlmann bound implicitly assumes $q_\Lambda \ll n/2$.
 
 ---
 
